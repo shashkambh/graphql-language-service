@@ -35,7 +35,7 @@
     "pretty-check": "node resources/pretty.js --check"
   },
   "peerDependencies": {
-    "graphql": "^0.6.0 || ^0.7.0 || ^0.8.0-b || ^0.9.0"
+    "graphql": "^0.9.3"
   },
   "dependencies": {
     "babel-polyfill": "6.16.0",
