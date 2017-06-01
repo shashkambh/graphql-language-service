@@ -64,7 +64,7 @@ export async function handleDidOpenOrSaveNotification(
 
   // Create/modify the cached entry if text is provided.
   // Otherwise, try searching the cache to perform diagnostics.
-  if (textDocument.text) {
+  if (textDocument.text || textDocument.text === '') {
     invalidateCache(textDocument, uri, contents);
   } else {
     const cachedDocument = getCachedDocument(uri);
@@ -273,7 +273,7 @@ export function getQueryAndRange(text: string, uri: string): Array<Content> {
     return parseGraphQLQueryFromText(text);
   } else {
     const query = text;
-    if (!query) {
+    if (!query && query !== '') {
       return [];
     }
     const lines = query.split('\n');
