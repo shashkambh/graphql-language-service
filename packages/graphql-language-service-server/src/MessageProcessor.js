@@ -31,6 +31,7 @@ import {
 } from 'vscode-languageserver';
 
 import {getGraphQLCache} from './GraphQLCache';
+import {GraphQLWatchman} from './GraphQLWatchman';
 
 let graphQLCache;
 let languageService;
@@ -147,12 +148,14 @@ export async function handleInitializeRequest(
   params: RequestMessage,
   token: CancellationToken,
   configDir?: string,
+  watchmanClient?: GraphQLWatchman,
 ): Promise<InitializeResult.type> {
   if (!params || !params.rootPath) {
     throw new Error('`rootPath` argument is required.');
   }
   const serverCapabilities = await initialize(
     configDir ? configDir.trim() : params.rootPath,
+    watchmanClient,
   );
 
   if (!serverCapabilities) {
@@ -327,7 +330,10 @@ function parseGraphQLQueryFromText(text: string): Array<Content> {
  * Helper functions to perform requested services from client/server.
  */
 
-async function initialize(rootPath: Uri): Promise<?ServerCapabilities> {
+async function initialize(
+  rootPath: Uri,
+  watchmanClient?: GraphQLWatchman,
+): Promise<?ServerCapabilities> {
   const serverCapabilities = {
     capabilities: {
       completionProvider: {resolveProvider: true},
@@ -341,7 +347,7 @@ async function initialize(rootPath: Uri): Promise<?ServerCapabilities> {
     return null;
   }
 
-  graphQLCache = await getGraphQLCache(configDir);
+  graphQLCache = await getGraphQLCache(configDir, watchmanClient);
   languageService = new GraphQLLanguageService(graphQLCache);
 
   return serverCapabilities;
